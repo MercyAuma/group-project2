@@ -1,0 +1,34 @@
+body{
+    background-color: whitesmoke;
+
+}
+
+
+.title {
+ margin-top: 20px;
+ margin-bottom: 15px;
+ font-size: 20px;
+ text-align: center;
+ color: rgb(12, 86, 204)
+}
+
+
+
+
+footer{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color:rgb(14, 56, 124); 
+    color: white;
+    text-align: center;
+    border-top-style: solid; 
+    border-top-color: white;
+     height: 30px; 
+    font-size: 14px; 
+    padding-top: 10px; 
+    border: black;
+    color: white; 
+    
+    }

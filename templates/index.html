@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ICU beds capacity</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        
+        <div class="col-md-12 jumbotron" style="text-align: center">
+            <h1>ICU beds capacity</h1>
+            <p>use map and charts below to explore the dataset</p>
+            <hr>
+            <br>
+        </div>
+         
+        <div class="row">
+            <div class="col-md-2" style="text-align: center">
+                <h3>ICU beds map</h3>
+                <div id="map"></div>
+                <hr>
+                <br>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md">
+                <h3>Covid cases line graph</h3>
+                <div id="line Graph"></div>
+                
+                <br>
+            </div>
+
+            <div class="col-md">
+                <h3>ICU beds</h3>
+                <div id="bar Graph"></div>
+                
+                <br>
+                
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.min.js"></script>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- <script src="{{ url_for('static', filename='js/app.js') }}"></script> -->
+
+    <!-- Footer Section -->
+<footer>
+    <div class="footer">Copyright &copy; xxxxxx</div>
+</footer>
+</body>
+
+</html>
