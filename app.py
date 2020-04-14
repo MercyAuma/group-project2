@@ -52,95 +52,72 @@ Base = automap_base()
 Base.prepare(engine, reflect=True)
 
 # Save reference to the table
-Dataset = Base.classes.Master_Dataset
-
-
-
-
-# create route that renders index.html template
-
-# Your models.py file should include the definition of classes 
-# which define the models of your database tables.
-#  Such classes inherit from the class db.Model where db is your SQLAlchemy object. 
-#  Further, you may want to define models implementing custom methods, 
-#  like an home-made __repr__ or a json method to format objects or 
-#  export it to json. It could be helpful to define a base model which will lay the ground for all your other models:
-
+Dataset = Base.classes.covid_cases
+State = Base.classes.state_county_info
 
 
 @app.route("/")
 def index():
-# Render_template: This function allows us to display to the user a dynamic web page they can interact with. We can send data to be dyanmically shown on that page via parameters.Request: From Python in some apps it is imperative to retrieve data from a form or querystring. We use request from Flask to do this.
-# Mail: Useful for sending email from your Python application using the SMTP protocol.
-# Request: From Python in some apps it is imperative to retrieve data from a form or querystring. We use request from Flask to 
+    print("index page requested")
     return render_template("index.html")
 
 
 
 
-@app.route("/data")
-def data():
+@app.route("/data/state")
+# dataset to bee used for the map markers
+def datastate():
+    print("State ICU beds/population data requested")
 
    # Create our session (link) from Python to the DB
     session = Session(engine)
-
-    results=session.query(Dataset.state,Dataset.county).all()
-
+    results=session.query(State.state,func.count(State.county_id).label("county_count"),func.sum(State.population).label("population"),func.sum(State.icu_beds).label("beds")).group_by(State.state)
     # Create a dictionary from the row data and append to a list of all_passengers
-    
     data_list = []
     for row in results:
-        data_dict={}
-        data_dict["state"] = row.state
-        data_dict["county"] = row.county
-        data_dict["county_name"]=county_name
-        data_dict["Date"] =occurence_date
-        data_dict["Confirmed_cases"] =confirmed
-        data_dict[ "Confirmed_deaths"] =deaths
-        data_dict["recovered"] =recovered
-        data_dict["ICU_Beds"] =icu_beds
-        data_dict["Populataion"] = population
-        data_dict["ID"]=id
-
+        data_dict={
+        "state":row.state,
+        "county_count":row.county_count,
+        "Population": str(row.population),
+        "beds":str(row.beds)
+        }
         data_list.append(data_dict)
         
-        # data_dict["age"] = age
-        # data_dict["sex"] = sex
-        # data_list.append(data_dict)
-
-        # Create a dictionary from the row data and append to a list of all_passengers
-    # all_passengers = []
-    # for name, age, sex in results:
-    #     passenger_dict = {}
-    #     passenger_dict["name"] = name
-    #     passenger_dict["age"] = age
-    #     passenger_dict["sex"] = sex
-    #     all_passengers.append(passenger_dict)
-
-    # return jsonify(all_passengers)
-
-
-
-        
-
-    # data = [{
-
-    # "county_id": county,
-    # "state_name":state,
-    # "county_name":county_name,
-    # # "Date":occurence_date,
-    # "Confirmed_cases":confirmed,
-    # "Confirmed_deaths":deaths,
-    # "recovered":recovered,
-    # "ICU_Beds":icu_beds,
-    # "Populataion": population,
-    # "ID":id
-    # }]
+    
 
     # close session
     session.close()
 
     return jsonify(data_list)
+
+    # return redirect("/")
+
+@app.route("/data/cases")
+# dataset to bee used for covid cases 
+def datacases():
+    print("covid-19 cases data requested")
+
+   # Create our session (link) from Python to the DB
+    session = Session(engine)
+    results=session.query(Dataset.state,func.count(Dataset.county_id).label("county_count"),Dataset.occurence_date,func.sum(Dataset.confirmed).label("confirmed"),func.sum(Dataset.deaths).label("deaths"),func.sum(Dataset.recovered).label("recovered")).group_by(Dataset.state,Dataset.occurence_date)
+    # Create a dictionary from the row data and append to a list of all_passengers
+    cases_list = []
+    for row in results:
+        cases_dict={
+        "state":row.state,
+        "date":row.occurence_date,
+        "confirmed":str(row.confirmed),
+        "recovered": str(row.recovered),
+        "deaths":str(row.deaths)
+        }
+        cases_list.append(cases_dict)
+        
+    
+
+    # close session
+    session.close()
+
+    return jsonify(cases_list)
 
     # return redirect("/")
 
