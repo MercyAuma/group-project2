@@ -29,19 +29,42 @@ d3.json(link, function(data) {
 var geoData = "static/data/usstates.geojson";
 var stateData="/data/state";
 
+// var combinedgeo=jq -s '[.0] + .[1] | group_by(.NAME)'
 
-
-d3.json(stateData, function(sdata) {
-  // Loop through data
-for (var i = 0; i < sdata.length; i++) {
-
- // Set the data location property to a variable
- var location = sdata[i].state;
-
-   console.log("State Data:" + location)
-
+function extend(dest, src) {
+  for(var key in src) {
+      dest[key] = src[key];
   }
-});
+  return dest;
+}
+
+test=extend(geoData, stateData);
+console.log("Test:"+test);
+
+// d3.json(test, function(sdata1) {
+//   // Loop through data
+// for (var i = 0; i < sdata1.length; i++) {
+
+//  // Set the data location property to a variable
+//  var location = sdata1[i].state;
+
+//    console.log("State Data:" + location)
+
+//   }
+// });
+
+
+// d3.json(stateData, function(sdata) {
+//   // Loop through data
+// for (var i = 0; i < sdata.length; i++) {
+
+//  // Set the data location property to a variable
+//  var location = sdata[i].state;
+
+//    console.log("State Data:" + location)
+
+//   }
+// });
 
 var geojson;
 

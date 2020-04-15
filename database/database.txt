@@ -19,9 +19,7 @@ CREATE TABLE public.covid_cases
     occurence_date date,
     confirmed bigint,
     deaths bigint,
-    recovered bigint,
-    id bigint NOT NULL DEFAULT nextval('"Master_Dataset_P_Key_seq"'::regclass),
-    CONSTRAINT "Master1_Dataset_pkey" PRIMARY KEY (id)
+    recovered bigint
 )
 WITH (
     OIDS = FALSE
@@ -50,3 +48,12 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.state_county_info
     OWNER to postgres;
+	
+	
+	
+	
+	
+	
+---Only run this part after importing the data into the tables
+ALTER TABLE public."covid_cases" ADD COLUMN "id" BIGSERIAL
+PRIMARY KEY;
