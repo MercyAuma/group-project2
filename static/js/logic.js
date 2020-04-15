@@ -29,7 +29,22 @@ d3.json(link, function(data) {
 var geoData = "static/data/usstates.geojson";
 var stateData="/data/state";
 
+
+
+d3.json(stateData, function(sdata) {
+  // Loop through data
+for (var i = 0; i < sdata.length; i++) {
+
+ // Set the data location property to a variable
+ var location = sdata[i].state;
+
+   console.log("State Data:" + location)
+
+  }
+});
+
 var geojson;
+
 
 // Grab data with d3
 d3.json(geoData, function(data) {
@@ -54,14 +69,23 @@ console.log(data);
       weight: 1,
       fillOpacity: 0.8
     },
-    
 
+
+
+   
     // Binding a pop-up to each layer
     onEachFeature: function(feature, layer) {
+    
+    console.log(feature.properties.NAME)
+
+
+
       layer.bindPopup("State: " + feature.properties.NAME + "<br>population:<br>" +
         + feature.properties.CENSUSAREA);
-    }
-  }).addTo(myMap);
+ 
+}
+ 
+}).addTo(myMap);
 
   // // Set up the legend
   // var legend = L.control({ position: "bottomright" });
@@ -92,4 +116,5 @@ console.log(data);
   // legend.addTo(myMap);
 
 });
+
 
