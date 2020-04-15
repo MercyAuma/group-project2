@@ -17,7 +17,7 @@ L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 }).addTo(myMap);
 
 // Uncomment this link local geojson for when data.beta.nyc is down
-var link = "static/data/usstates.json";
+var link = "static/data/usstates.geojson";
 
 // Grabbing our GeoJSON data..
 d3.json(link, function(data) {
@@ -26,7 +26,8 @@ d3.json(link, function(data) {
 });
 
 // Load in geojson data
-var geoData = "/data/state";
+var geoData = "static/data/usstates.geojson";
+var stateData="/data/state";
 
 var geojson;
 
@@ -37,10 +38,10 @@ console.log(data);
   geojson = L.choropleth(data, {
 
     // Define what  property in the features to use
-    valueProperty: "Population",
+    valueProperty: "STATE",
 
     // Set color scale
-    scale: ["#ffffb2", "#b10026"],
+    // scale: ["#ffffb2", "#b10026"],
 
     // Number of breaks in step range
     steps: 10,
@@ -53,11 +54,12 @@ console.log(data);
       weight: 1,
       fillOpacity: 0.8
     },
+    
 
     // Binding a pop-up to each layer
     onEachFeature: function(feature, layer) {
-      layer.bindPopup("population: " + feature.properties.Population + "<br>ICU beds:<br>" +
-        "$" + feature.properties.beds);
+      layer.bindPopup("State: " + feature.properties.NAME + "<br>population:<br>" +
+        + feature.properties.CENSUSAREA);
     }
   }).addTo(myMap);
 
