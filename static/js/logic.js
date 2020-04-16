@@ -29,8 +29,14 @@ d3.json(link, function(data) {
 var geoData = "static/data/usstates.geojson";
 var stateData="/data/state";
 
+// Define a dictionary to hold key-value pairs,
+// where the key is the state name and the value is
+// the number of ICU beds in that state. - DOM
 var icuBedsLookup = {};
 
+// Define a function that populates the dictionary 
+// of ICU beds. This function should be called once
+// when the page loads. - DOM
 function countIcuBeds() {
   d3.json(stateData).then((data) => {
 
@@ -44,6 +50,7 @@ function countIcuBeds() {
   }); 
 }
 
+// Populate the dictionary of ICU beds - DOM
 countIcuBeds();
 
 
@@ -114,10 +121,11 @@ console.log(data);
     // Binding a pop-up to each layer
     onEachFeature: function(feature, layer) {    
       console.log(feature.properties.NAME);
+
+      // Use the state name to lookup the number of ICU beds - DOM
       var numBeds = icuBedsLookup[feature.properties.NAME]; 
       layer.bindPopup("State: " + feature.properties.NAME + "<br>population: "
         + feature.properties.CENSUSAREA + "<br>ICU Beds: " + numBeds); 
- 
 }
  
 }).addTo(myMap);
