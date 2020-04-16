@@ -12,7 +12,7 @@ L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 // L.tileLayer("https://api.mapbox.com/styles/v1/mauma/ck8y47lqu03m31it4vnm9v7d9.html?fresh=true&title=copy&access_token={accessToken}", {
   attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
   maxZoom: 18,
-  id: "mapbox.streets-basic",
+  id: "mapbox.streets",
   accessToken: API_KEY
 }).addTo(myMap);
 
@@ -31,12 +31,13 @@ var stateData="/data/state";
 
 // Define a dictionary to hold key-value pairs,
 // where the key is the state name and the value is
-// the number of ICU beds in that state. - DOM
+// the number of ICU beds in that state. 
 var icuBedsLookup = {};
+
 
 // Define a function that populates the dictionary 
 // of ICU beds. This function should be called once
-// when the page loads. - DOM
+// when the page loads. 
 function countIcuBeds() {
   d3.json(stateData).then((data) => {
 
@@ -46,62 +47,72 @@ function countIcuBeds() {
       }
     }); 
 
-    console.log(icuBedsLookup); 
+    // console.log(icuBedsLookup); 
   }); 
 }
-
-// Populate the dictionary of ICU beds - DOM
+// Populate the dictionary of ICU beds 
 countIcuBeds();
 
 
-// var combinedgeo=jq -s '[.0] + .[1] | group_by(.NAME)'
+// Define a function that populates the dictionary 
+// of population. This function should be called once
+// when the page loads.
+var populationLookup = {};
 
-function extend(dest, src) {
-  for(var key in src) {
-      dest[key] = src[key];
-  }
-  return dest;
+function countpopulation() {
+  d3.json(stateData).then((data) => {
+
+    data.forEach((state) => {
+      if (!(state.NAME in populationLookup)) {
+        populationLookup[state.NAME] = state.Population;
+      }
+    }); 
+
+    // console.log(populationLookup); 
+  }); 
 }
+// Populate the dictionary of ICU beds 
+countpopulation();
 
-test=extend(geoData, stateData);
-console.log("Test:"+test);
+  //  create a function that will return state name from geogyson file
+  function myFunction(e) {
+  //  console.log(e.sourceTarget.feature.properties.NAME);
+   addState(e.sourceTarget.feature.properties.NAME)
+   
+   }
+  
+  
+   //Feed in the state from the geojyson file to return state graph values
+   function addState(stateN){
+     console.log(stateN)
+    d3.json(stateData).then(function(sdata) {
+      // Loop through data
+    for (var i = 0; i < sdata.length; i++) {
+      var location = sdata[i].state;
+      // console.log(location)
+    
+    if (sdata[i].state == stateN){
+    console.log(stateN)
+    //now make pie chart
+    
+    }
+     };
+    
+      }
+    )};
 
-// d3.json(test, function(sdata1) {
-//   // Loop through data
-// for (var i = 0; i < sdata1.length; i++) {
-
-//  // Set the data location property to a variable
-//  var location = sdata1[i].state;
-
-//    console.log("State Data:" + location)
-
-//   }
-// });
-
-
-// d3.json(stateData, function(sdata) {
-//   // Loop through data
-// for (var i = 0; i < sdata.length; i++) {
-
-//  // Set the data location property to a variable
-//  var location = sdata[i].state;
-
-//    console.log("State Data:" + location)
-
-//   }
-// });
 
 var geojson;
 
 // Grab data with d3
 d3.json(geoData).then((data) => {
-console.log(data);
+// console.log(data);
 
   // Create a new choropleth layer
   geojson = L.choropleth(data, {
 
     // Define what  property in the features to use
-    valueProperty: "STATE",
+    valueProperty: "CENSUSAREA",
 
     // Set color scale
     // scale: ["#ffffb2", "#b10026"],
@@ -120,43 +131,19 @@ console.log(data);
      
     // Binding a pop-up to each layer
     onEachFeature: function(feature, layer) {    
-      console.log(feature.properties.NAME);
+      // console.log(feature.properties.NAME);
+      layer.on({click:myFunction})
 
       // Use the state name to lookup the number of ICU beds - DOM
       var numBeds = icuBedsLookup[feature.properties.NAME]; 
-      layer.bindPopup("State: " + feature.properties.NAME + "<br>population: "
-        + feature.properties.CENSUSAREA + "<br>ICU Beds: " + numBeds); 
+      var numPop = populationLookup[feature.properties.NAME]; 
+      layer.bindPopup("State: " + feature.properties.NAME + "<br>Population: "
+        + numPop + "<br>ICU Beds: " + numBeds); 
 }
  
 }).addTo(myMap);
 
-  // // Set up the legend
-  // var legend = L.control({ position: "bottomright" });
-  // legend.onAdd = function() {
-  //   var div = L.DomUtil.create("div", "info legend");
-  //   var limits = geojson.options.limits;
-  //   var colors = geojson.options.colors;
-  //   var labels = [];
-
-  //   // Add min & max
-  //   var legendInfo = "<h1>Median Income</h1>" +
-  //     "<div class=\"labels\">" +
-  //       "<div class=\"min\">" + limits[0] + "</div>" +
-  //       "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
-  //     "</div>";
-
-  //   div.innerHTML = legendInfo;
-
-  //   limits.forEach(function(limit, index) {
-  //     labels.push("<li style=\"background-color: " + colors[index] + "\"></li>");
-  //   });
-
-  //   div.innerHTML += "<ul>" + labels.join("") + "</ul>";
-  //   return div;
-  // };
-
-  // // Adding legend to the map
-  // legend.addTo(myMap);
+  
 
 });
 
