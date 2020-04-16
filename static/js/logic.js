@@ -29,6 +29,24 @@ d3.json(link, function(data) {
 var geoData = "static/data/usstates.geojson";
 var stateData="/data/state";
 
+var icuBedsLookup = {};
+
+function countIcuBeds() {
+  d3.json(stateData).then((data) => {
+
+    data.forEach((state) => {
+      if (!(state.NAME in icuBedsLookup)) {
+        icuBedsLookup[state.NAME] = state.beds;
+      }
+    }); 
+
+    console.log(icuBedsLookup); 
+  }); 
+}
+
+countIcuBeds();
+
+
 // var combinedgeo=jq -s '[.0] + .[1] | group_by(.NAME)'
 
 function extend(dest, src) {
@@ -68,10 +86,10 @@ console.log("Test:"+test);
 
 var geojson;
 
-
 // Grab data with d3
-d3.json(geoData, function(data) {
+d3.json(geoData).then((data) => {
 console.log(data);
+
   // Create a new choropleth layer
   geojson = L.choropleth(data, {
 
@@ -92,19 +110,13 @@ console.log(data);
       weight: 1,
       fillOpacity: 0.8
     },
-
-
-
-   
+     
     // Binding a pop-up to each layer
-    onEachFeature: function(feature, layer) {
-    
-    console.log(feature.properties.NAME)
-
-
-
-      layer.bindPopup("State: " + feature.properties.NAME + "<br>population:<br>" +
-        + feature.properties.CENSUSAREA);
+    onEachFeature: function(feature, layer) {    
+      console.log(feature.properties.NAME);
+      var numBeds = icuBedsLookup[feature.properties.NAME]; 
+      layer.bindPopup("State: " + feature.properties.NAME + "<br>population: "
+        + feature.properties.CENSUSAREA + "<br>ICU Beds: " + numBeds); 
  
 }
  
