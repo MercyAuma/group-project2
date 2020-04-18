@@ -3,7 +3,7 @@
 // This gets inserted into the div with an id of 'map'
 var myMap = L.map("map", {
   center: [38.30, -98.00],
-  zoom: 4
+  zoom: 3.8
 });
 
 // Adding a tile layer (the background map image) to our map
@@ -12,9 +12,12 @@ L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 // L.tileLayer("https://api.mapbox.com/styles/v1/mauma/ck8y47lqu03m31it4vnm9v7d9.html?fresh=true&title=copy&access_token={accessToken}", {
   attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
   maxZoom: 18,
-  id: "mapbox.streets",
+  id: "mapbox.light",
   accessToken: API_KEY
 }).addTo(myMap);
+
+
+
 
 // Uncomment this link local geojson for when data.beta.nyc is down
 var link = "static/data/usstates.geojson";
@@ -44,6 +47,7 @@ function countIcuBeds() {
     data.forEach((state) => {
       if (!(state.NAME in icuBedsLookup)) {
         icuBedsLookup[state.NAME] = state.beds;
+       
       }
     }); 
 
@@ -76,30 +80,21 @@ countpopulation();
 
   //  create a function that will return state name from geogyson file
   function myFunction(e) {
-  //  console.log(e.sourceTarget.feature.properties.NAME);
+
+   console.log(e.sourceTarget.feature.properties.NAME);
    addState(e.sourceTarget.feature.properties.NAME)
+   DrawPieChart(e.sourceTarget.feature.properties.NAME);
    
    }
   
   
    //Feed in the state from the geojyson file to return state graph values
-   function addState(stateN){
-     console.log(stateN)
-    d3.json(stateData).then(function(sdata) {
-      // Loop through data
-    for (var i = 0; i < sdata.length; i++) {
-      var location = sdata[i].state;
-      // console.log(location)
-    
-    if (sdata[i].state == stateN){
-    console.log(stateN)
-    //now make pie chart
-    
-    }
-     };
-    
-      }
-    )};
+    //Feed in the state from the geojyson file to return state graph values
+    function addState(stateN){
+      console.log(stateN)
+     return stateN;
+   };
+ 
 
 
 var geojson;
@@ -139,12 +134,102 @@ d3.json(geoData).then((data) => {
       var numPop = populationLookup[feature.properties.NAME]; 
       layer.bindPopup("State: " + feature.properties.NAME + "<br>Population: "
         + numPop + "<br>ICU Beds: " + numBeds); 
+      
 }
  
 }).addTo(myMap);
 
-  
+// Add a legend
+var legend = L.control({ position: "bottomright" });
+legend.onAdd = function() {
+  var div = L.DomUtil.create("div", "info legend");
+  var limits = geojson.options.limits;
+  var colors = geojson.options.colors;
+  var labels = [];
+  // Add min & max
+  var legendInfo = "<h2>Census Area</h2>" +
+    "<div class=\"labels\">" +
+      "<div class=\"min\">" + limits[0] + "</div>" +
+      "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
+    "</div>";
+  div.innerHTML = legendInfo;
+  limits.forEach(function(limit, index) {
+    labels.push("<li style=\"background-color: " + colors[index] + "\"></li>");
+  });
+  div.innerHTML += "<ul>" + labels.join("") + "</ul>";
+  return div;
+};
+// Adding legend to the map
+legend.addTo(myMap);
+
 
 });
 
+function DrawPieChart(id) {
+  
+  console.log("DrawPieChart Started")
 
+  d3.json("/data/state").then(function(data) {
+  // filter samples by id 
+  console.log(id)
+
+  var newState = data.filter((x)=>x.NAME === id);
+  //var newState = data.filter((x)=>x.state === id);
+  console.log(newState)
+  newState.forEach(function(d) {
+    d.beds = +d.beds;
+    d.county_count = +d.county_count;
+    console.log(d.county_count) 
+  });
+
+  //keys = Object.keys(data);
+  //keys = newState.map(function(d) { return d.State_Abbr; }); 
+  keys = ["Beds", "County Count"]
+  values1 = [newState.map(function(d) { return d.beds;})];
+  console.log(values1)
+  values2 = values1[0]
+  values3 = [newState.map(function(d) { return d.county_count;})];
+  values4 = values3[0]
+  
+      // create trace0 Data  for bar chart for one state
+  var trace7 = [{
+      values : [values2[0], values4[0]],
+      //values : [[newState.map(function(d) { return d.beds;})], 25],
+      //values : [500,d.county_count],
+      labels : keys,
+      //  x: keys,
+      //  y: values,
+       // text: labels,
+        
+      type:"pie",
+      orientation: "v",
+  }];
+
+    var data7 = [trace7];
+
+
+// Define a layout object
+  var layout = {
+      title: "Number of counties VS icu beds",
+      
+      width: 400,
+      height: 400,
+      
+    };  
+    Plotly.newPlot("Piechart", trace7, layout);
+
+
+
+  });
+}  //End Function DrawPieChart
+
+function init() {
+  // select dropdown menu 
+  //var dropdown = d3.select("#selDataset");
+  var Initial_State = "Minnesota"
+  DrawPieChart(Initial_State);
+  
+}
+
+
+init();
