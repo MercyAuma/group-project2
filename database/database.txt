@@ -54,4 +54,14 @@ ALTER TABLE public.state_county_info
 
 
 
+-- Column: public.covid_cases.month
+
+-- ALTER TABLE public.covid_cases DROP COLUMN month;
+
+ALTER TABLE public.covid_cases
+    ADD COLUMN month character varying(50) COLLATE pg_catalog."default";
+	
+	update public.covid_cases
+	set month=EXTRACT(MONth from occurence_date);
+
 
