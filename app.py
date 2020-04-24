@@ -100,6 +100,7 @@ def datacases():
    # Create our session (link) from Python to the DB
     session = Session(engine)
     
+    # results=session.query(Dataset.state,func.count(Dataset.county_id).label("county_count"),Dataset.month,func.sum(Dataset.confirmed).label("confirmed"),func.sum(Dataset.deaths).label("deaths"),func.sum(Dataset.recovered).label("recovered")).group_by(Dataset.state,Dataset.month)
     results=session.query(Dataset.state,func.count(Dataset.county_id).label("county_count"),Dataset.month,func.sum(Dataset.confirmed).label("confirmed"),func.sum(Dataset.deaths).label("deaths"),func.sum(Dataset.recovered).label("recovered")).group_by(Dataset.state,Dataset.month)
     # Create a dictionary from the row data and append to a list of all_passengers func.month(Dataset.occurence_date)
     cases_list = []
