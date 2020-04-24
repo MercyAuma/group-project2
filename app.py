@@ -61,7 +61,10 @@ def index():
     print("index page requested")
     return render_template("/index.html")
 
-
+@app.route("/about")
+def about():
+    print("about page requested")
+    return render_template("about.html")  
 
 
 @app.route("/data/state")
@@ -76,7 +79,7 @@ def datastate():
     data_list = []
     for row in results:
         data_dict={
-        "NAME":row.state,
+        "state":row.state,
         "county_count":row.county_count,
         "Population": str(row.population),
         "beds":str(row.beds)
@@ -114,12 +117,41 @@ def datacases():
         }
         cases_list.append(cases_dict)
         
-    
+ 
 
     # close session
     session.close()
 
     return jsonify(cases_list)
+
+    # return redirect("/")
+
+
+@app.route("/data/casessummary")
+# dataset to bee used for covid cases 
+def datacasessummary():
+    print("covid-19 cases summary data requested")
+
+   # Create our session (link) from Python to the DB
+    session = Session(engine)
+    
+    results=session.query(Dataset.state,func.sum(Dataset.confirmed).label("confirmed"),func.sum(Dataset.deaths).label("deaths"),func.sum(Dataset.recovered).label("recovered")).group_by(Dataset.state)
+    casessummary_list = []
+    for row in results:
+        cases_dict={
+        "state":row.state,
+        "confirmed":str(row.confirmed),
+        "recovered": str(row.recovered),
+        "deaths":str(row.deaths)
+        }
+        casessummary_list.append(cases_dict)
+        
+ 
+
+    # close session
+    session.close()
+
+    return jsonify(casessummary_list)
 
     # return redirect("/")
 

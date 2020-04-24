@@ -13,27 +13,22 @@
    }
   
   
- /* .container { */
-     /* width: 100%; */
-     /* background-color: white; */
-     /* font-size: 15px; */
-     /* margin-bottom: 10px;  */
-     /* padding:px;  */
-     /* margin-top: 15px;
-     opacity: 1;
-     position:absolute ;
-     padding: 20px;
-     margin-bottom: 50px; */
- /* } */
-      
-      
-      
-      /* .jumbotron jumbotron-fluid {
-        height: 14vh; 
-        width: 100%;
-
-      } */
-
+   footer{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color:rgb(0, 0, 0);
+    color: white;
+    text-align: center;
+    border-top-style: solid;
+    border-top-color: white;
+    height: 40px;
+    font-size: 14px;
+    padding-top: 10px;
+    border: black;
+    color: white;
+}
 
       #map {
         position: relative;

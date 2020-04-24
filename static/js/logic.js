@@ -41,8 +41,8 @@ function countIcuBeds() {
   d3.json(stateData).then((data) => {
 
     data.forEach((state) => {
-      if (!(state.NAME in icuBedsLookup)) {
-        icuBedsLookup[state.NAME] = state.beds;
+      if (!(state.state in icuBedsLookup)) {
+        icuBedsLookup[state.state] = state.beds;
        
       }
     }); 
@@ -63,8 +63,8 @@ function countpopulation() {
   d3.json(stateData).then((data) => {
 
     data.forEach((state) => {
-      if (!(state.NAME in populationLookup)) {
-        populationLookup[state.NAME] = state.Population;
+      if (!(state.state in populationLookup)) {
+        populationLookup[state.state] = state.Population;
       }
     }); 
 
@@ -164,28 +164,37 @@ function DrawPieChart(state) {
   
   console.log("DrawPieChart Started")
 
-  d3.json("/data/state").then(function(data) {
+  d3.json("/data/casessummary").then(function(data) {
   // filter samples by state
-  var newState = data.filter((x)=>x.NAME === state);
+  var newState = data.filter((x)=>x.state === state);
    // console.log(newState)
   newState.forEach(function(d) {
-    d.beds = +d.beds;
-    d.county_count = +d.county_count;
-    // console.log(d.county_count) 
+    
+    d.confirmed = +d.confirmed;
+    d.deaths = +d.deaths;
+    d.recovered = +d.recovered;
   });
 
-  keys = ["Beds", "Number of counties"]
-  beds_var1 = [newState.map(function(d) { return d.beds;})];
-  // console.log(values1)
-  beds_var2 = beds_var1[0]
-  nocounties_var1 = [newState.map(function(d) { return d.county_count;})];
-  nocounties_var2 = nocounties_var1[0]
+  keys = ["Confirmed","Deaths" ,"Recovered"]
+  // beds_var1 = [newState.map(function(d) { return d.beds;})];
+  // // console.log(values1)
+  // beds_var2 = beds_var1[0]
+  // nocounties_var1 = [newState.map(function(d) { return d.county_count;})];
+  // nocounties_var2 = nocounties_var1[0]
+  confirmed_var1 = [newState.map(function(d) { return d.confirmed;})];
+  confirmedcases= confirmed_var1[0]
 
+  deaths_var1 = [newState.map(function(d) { return d.deaths;})];
+  deathcases=deaths_var1[0]
 
+  recovered_var1 = [newState.map(function(d) { return d.recovered;})];
+  recoveredcases=recovered_var1[0]
+  console.log("death"+deathcases);
+  console.log("Recovered"+recoveredcases);
   
       // create trace0 Data  for bar chart for one state
   var trace = [{
-      values : [beds_var2[0], nocounties_var2[0]],
+      values : [confirmedcases[0], deathcases[0],recoveredcases[0]],
       labels : keys,
         
       type:"pie",
@@ -196,13 +205,13 @@ function DrawPieChart(state) {
 
 // Define a layout object
   var layout = {
-      title: "Number of counties VS icu beds",
+      title: "confirmed Vs recovered Vs dead cases",
       labels : keys,
-      width: 500,
+      width: 400,
       height: 300,
       
     };  
-    Plotly.newPlot("Piechart", trace, layout);
+    Plotly.newPlot("Piechart", trace);
 
 
 
@@ -240,8 +249,7 @@ function DrawLineChart(state) {
 
   recovered_var1 = [newState.map(function(d) { return d.recovered;})];
   recoveredcases=recovered_var1[0]
-  console.log("death"+deathcases);
-  console.log("Recovered"+recoveredcases);
+ 
       // create trace0 Data  line graph1
   var trace2 = [{
     
