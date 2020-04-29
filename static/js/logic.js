@@ -205,13 +205,13 @@ function DrawPieChart(state) {
 
 // Define a layout object
   var layout = {
-      title: "confirmed Vs recovered Vs dead cases",
+      title: "Confirmed vs Recovered vs Deaths",
       labels : keys,
       width: 400,
       height: 300,
       
     };  
-    Plotly.newPlot("Piechart", trace);
+    Plotly.newPlot("Piechart", trace,layout);
 
 
 
@@ -283,7 +283,7 @@ function DrawLineChart(state) {
   // ,trace3,trace4
 // Define a layout object
   var layout = {
-      title: "Covid 19 confirmed Cases",
+      title: "COVID-19 Confirmed Cases",
       
       width: 500,
       height: 300,
